@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-    baseURL: "https://api.groq.com/openai/v1",
-    apiKey: process.env.GROQ_API_KEY,
+
 });
 
 const GenerateMermaidDiagram = async (diagramDescription) => {
     const completion = await openai.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+
         messages: [
             // {
             //     role: "assistant",
