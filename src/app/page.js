@@ -1,9 +1,11 @@
-import ExcalidrawWrapper from "../components/Canvas"
+export const dynamic = "force-dynamic"; 
+import dynamic from "next/dynamic";
+const ExcalidrawWrapper = dynamic(() => import("../components/Canvas"), { ssr: false });
 
-const page = () => {
-  return <>
-  <ExcalidrawWrapper />;
-  </>
-};
-
-export default page;
+export default function Home() {
+  return (
+    <main>
+      <ExcalidrawWrapper />
+    </main>
+  );
+}
