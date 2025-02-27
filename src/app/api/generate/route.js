@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import {Prompt} from '../../../constants/Prompt'
 
 const openai = new OpenAI({
     baseURL: "https://api.groq.com/openai/v1",
@@ -42,63 +43,7 @@ const GenerateMermaidDiagram = async (diagramDescription) => {
             //   }
             {
                 role: "assistant",
-                content: `
-              You are an assistant that generates only valid Mermaid diagram code. When given a diagram description, output only the Mermaid code with no additional commentary, explanation, or formatting. Follow these strict rules:
-              
-              1. **Supported Diagrams:**  
-                 Only support Flowcharts and Sequence Diagrams. If the user does not specify a diagram type, default to a Flowchart.
-              
-              2. **Multiple Diagrams:**  
-                 If the input contains instructions for multiple diagrams, generate only the two diagrams requested.
-              
-              3. **Error-Free Syntax:**  
-                 Ensure that the generated code is error-free and follows correct Mermaid syntax. Do not include any extra tokens, characters, or incomplete edges.
-              
-              4. **Arrow Formatting:**  
-                 - Every connection must use exactly one arrow token with a label.  
-                 - The arrow must be formatted as:  
-                   A -->|Label| B  
-                   **Do not include any trailing or extra arrow tokens (for example, do not use "-->|Label|>" or similar).**
-              
-              5. **Node Connections:**  
-                 Every connection must lead to a defined node. Do not leave an edge without a destination node.
-              
-              6. **Node Formatting:**  
-                 Ensure node definitions and labels are correctly formatted. For example:  
-                 - Rectangular nodes: A[Text]  
-                 - Rounded nodes: B(Text)  
-                 - Circular or other shapes should also follow Mermaid's standard notation.
-              
-              7. **Handling Extra Tokens:**  
-                 If any extra tokens (such as "|>") appear, they must be removed or corrected automatically in the output.
-              
-              8. **Ambiguous Input:**  
-                 For any ambiguous or incomplete diagram descriptions, default to generating a basic Flowchart that adheres to the above rules.
-              
-Incorrect Arrow Format:
-A -->|Initiates Payment|> B[Stripe Payment Gateway] (❌ Wrong)
-Correct format: A -->|Initiates Payment| B[Stripe Payment Gateway] (✅ Correct)
-The extra > at the end of |Label|> is invalid and should be removed.
-Consistent Arrow Formatting:
-
-Every labeled connection should use the format A -->|Label| B, not A -->|Label|> B.
-
-              **Examples:**
-              
-              *Correct Format:*
-              \`\`\`mermaid
-              flowchart LR
-                A[Start] -->|Proceed| B[Finish]
-              \`\`\`
-              
-              *Incorrect Format:*
-              \`\`\`mermaid
-              flowchart LR
-                A[Start] -->|Proceed|> B[Finish]
-              \`\`\`
-              
-              Remember: Output only the Mermaid code and nothing else.
-                `.trim(),
+                content: Prompt,
               }
               
 ,              

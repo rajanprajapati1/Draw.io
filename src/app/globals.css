@@ -11,3 +11,17 @@ label[title*="Library"] {
 .box-shadow{
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
+
+.cus .excalidraw {
+    --color-primary: #fcc6d9;
+    --color-primary-darker: #f783ac;
+    --color-primary-darkest: #e64980;
+    --color-primary-light: #f2a9c4;
+  }
+  
+  .cus .excalidraw.theme--dark {
+    --color-primary: #d494aa;
+    --color-primary-darker: #d64c7e;
+    --color-primary-darkest: #e86e99;
+    --color-primary-light: #dcbec9;
+  }
