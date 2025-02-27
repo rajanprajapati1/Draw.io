@@ -28,20 +28,19 @@ export default function IconsPanel({ onIconSelect }) {
     return iconList.filter((icon) => icon.title.toLowerCase().includes(search.toLowerCase()))
   }, [search, iconList])
 
-  console.log(filteredIcons?.slice(0,5))
 
   return (
-    <div className="p-4 h-full overflow-y-auto">
+    <div className="p-4 w-[400px] h-[50vh] rounded-md overflow-y-auto shadow-2xl iconcontainer absolute bg-white top-28 left-20 z-[99999]">
       <h2 className="text-lg font-semibold mb-4">Icons</h2>
 
-      <div className="relative mb-4">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="relative mb-4 border gap-2 flex items-center px-2 py-2">
+        <Search className=" text-gray-500" />
         <input
           type="text"
-          placeholder="Search icons..."
+          placeholder="Ex. Node , Vercel , Meta"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-8"
+          className=" outline-none border-none"
         />
       </div>
 
@@ -79,7 +78,7 @@ export default function IconsPanel({ onIconSelect }) {
               <div
                 key={icon.slug}
                 className="flex flex-col items-center p-2 border rounded-md hover:bg-muted cursor-pointer transition-colors"
-                onClick={() => onIconSelect(icon.title, icon.path, icon.hex,icon)}
+                onClick={() => onIconSelect(icon.slug, icon.path, icon.hex)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import Button from "./Button";
 import {Excalidraw } from '../constants/Excalidraw'
 import Screen from './Screen';
-import { PanelRight } from "lucide-react";
+import { Blocks, PanelRight } from "lucide-react";
 import { useState } from "react";
 import IconsPanel from './IconPanel';
 
@@ -59,6 +59,7 @@ export default function ExcalidrawWrapper() {
             <IconsPanel
                onIconSelect={(title, slug, hex ,icon) => {
                 renderIconInExcalidraw(title, slug, hex ,icon);
+                setShowIconsPanel(false)
               }}
             />
           </div>
@@ -66,10 +67,9 @@ export default function ExcalidrawWrapper() {
       <button
             variant="outline"
             onClick={() => setShowIconsPanel(!showIconsPanel)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 absolute top-16 text-gray-500 p-[9px] bg-white left-4 rounded-lg z-[99]"
           >
-            <PanelRight className="h-4 w-4" />
-            {showIconsPanel ? "Hide Icons" : "Show Icons"}
+            <Blocks  className="h-6 w-6" />
           </button>
     </div>
   );

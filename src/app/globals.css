@@ -25,3 +25,22 @@ label[title*="Library"] {
     --color-primary-darkest: #e86e99;
     --color-primary-light: #dcbec9;
   }
+
+  /* .iconcontainer::-webkit-scrollbar */
+
+.iconcontainer::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.iconcontainer::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #F5F5F5;
+}
+
+.iconcontainer::-webkit-scrollbar-thumb
+{
+	background-color: lightpink;
+}

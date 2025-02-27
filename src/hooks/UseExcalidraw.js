@@ -20,10 +20,38 @@ export function useExcalidraw() {
 
   useEffect(() => {
     setMounted(true);
-    const savedElements = localStorage.getItem("excalidrawElements");
-    if (savedElements && excalidrawAPI) {
-      excalidrawAPI.updateScene({ elements: JSON.parse(savedElements) });
+    if (excalidrawAPI) {
+      const savedElements = localStorage.getItem("excalidrawElements");
+      if (savedElements) {
+        try {
+          const parsedElements = JSON.parse(savedElements);
+          excalidrawAPI.updateScene({ elements: parsedElements });
+          console.log("Scene restored from localStorage:", parsedElements);
+        } catch (error) {
+          console.error("Error parsing saved elements from localStorage:", error);
+          localStorage.removeItem("excalidrawElements"); 
+        }
+      }
     }
+  }, [excalidrawAPI]);
+
+  // Store scene in localStorage before page unload
+  useEffect(() => {
+    if (!excalidrawAPI) return;
+
+    const handleBeforeUnload = () => {
+      const sceneElements = excalidrawAPI.getSceneElements();
+      if (sceneElements && sceneElements.length > 0) {
+        localStorage.setItem("excalidrawElements", JSON.stringify(sceneElements));
+        console.log("Scene saved to localStorage before unload:", sceneElements);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, [excalidrawAPI]);
 
   const MermaidToExcali = async (diagramDefinition) => {
@@ -97,14 +125,6 @@ export function useExcalidraw() {
   useEffect(() => {
     if (excalidrawAPI) {
       excalidrawAPI.updateLibrary({ libraryItems: [] });
-      const onChange = () => {
-        const elements = excalidrawAPI.getSceneElements();
-        localStorage.setItem("excalidrawElements", JSON.stringify(elements));
-      };
-      excalidrawAPI.onChange(onChange);
-      return () => {
-        excalidrawAPI?.off("change", onChange);
-      };
     }
   }, [excalidrawAPI]);
 
@@ -145,6 +165,7 @@ export function useExcalidraw() {
   const renderIconInExcalidraw = async (title, slug, hex ,icon) => {
     if (!excalidrawAPI) return;
     const imageUrl = `${ICONS_CDN_URL}/${title}/${hex}`;
+    console.log(imageUrl,"imageUrl")
 
     try {
       const response = await fetch(imageUrl);
@@ -202,83 +223,47 @@ export function useExcalidraw() {
     }
   };
 
-  const getAllElements = (excalidrawAPI) => {
-    if (!excalidrawAPI) return [];
-  
-    const elements = excalidrawAPI.getSceneElements();
-    console.log("All Elements in Scene:", elements);
-  
-    return elements;
-  };
-  
-  const handleGetElements = () => {
-    const elements = getAllElements(excalidrawAPI);
-    console.log("Current Excalidraw Elements:", elements);
-  };
+  // const storeSceneInApi = async (sceneElements) => {
+  //   if (!sceneElements || sceneElements.length === 0) return; // Skip if no elements
 
-  const insertGoogleLogo = async () => {
-    if (!excalidrawAPI) return;
+  //   try {
+  //     const response = await fetch("/api/store/redis", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //                 diagramData: JSON.stringify(sceneElements), 
+  //       }),
+  //     });
 
-    const iconSlug = "google";
-    const color = "4285F4"; 
-    const imageUrl = `https://cdn.simpleicons.org/${iconSlug}/${color}`;
+  //     const result = await response.json();
 
-    try {
-      const response = await fetch(imageUrl);
-      const svgText = await response.text();
+  //     if (!response.ok) {
+  //       throw new Error(result.error || "Failed to store scene");
+  //     }
 
-      const base64Data = `data:image/svg+xml;base64,${btoa(svgText)}`;
+  //     console.log("Scene stored successfully on refresh/unload:", result);
+  //   } catch (error) {
+  //     console.error("Error storing scene in API:", error);
+  //   }
+  // };
 
-      const fileId = `${iconSlug}-${Date.now()}`;
-      excalidrawAPI.addFiles([
-        {
-          id: fileId,
-          dataURL: base64Data,
-          mimeType: "image/svg+xml",
-          created: Date.now(),
-        },
-      ]);
+  // useEffect(() => {
+  //   if (!excalidrawAPI) return;
 
-      const imageElement = {
-        type: "image",
-        x: 100,
-        y: 100,
-        width: 100,
-        height: 100,
-        angle: 0,
-        strokeColor: "transparent",
-        backgroundColor: "transparent",
-        fillStyle: "hachure",
-        strokeWidth: 1,
-        strokeStyle: "solid",
-        roughness: 1,
-        opacity: 100,
-        groupIds: [],
-        frameId: null,
-        roundness: null,
-        seed: Math.floor(Math.random() * 100000),
-        version: 1,
-        versionNonce: Math.floor(Math.random() * 100000),
-        isDeleted: false,
-        boundElements: null,
-        updated: Date.now(),
-        link: null,
-        locked: false,
-        fileId, // Link to the added file
-        status: "saved", // Mark as saved, not pending
-        scale: [1, 1],
-      };
+  //   const handleBeforeUnload = () => {
+  //     const sceneElements = excalidrawAPI.getSceneElements();
+  //     localStorage.setItem("excalidrawElements", JSON.stringify(sceneElements));
+  //     // storeSceneInApi(sceneElements);
+  //   };
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, [excalidrawAPI]);
 
-      excalidrawAPI.updateScene({
-        elements: [...excalidrawAPI.getSceneElements(), imageElement],
-      });
 
-      console.log("Inserted Google Logo!");
-    } catch (error) {
-      console.error("Failed to insert Google logo:", error);
-    }
-  };
-  
 
   return {
     mounted,
